@@ -18,11 +18,18 @@
             const message = `Obrigado, ${name}! Você apostou no ${team}. A partida começa em: ${matchTime}.`;
             document.getElementById('confirmation-message').innerText = message;
 
-            // Armazenar a aposta no localStorage
+            // Armazenar a aposta no Firestore
             const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
-            const betData = JSON.parse(localStorage.getItem('betData')) || [];
-            betData.push({ user: loggedInUser.username, team, matchTime });
-            localStorage.setItem('betData', JSON.stringify(betData));
+            db.collection('bets').add({
+                user: loggedInUser.username,
+                team: team,
+                matchTime: matchTime
+            }).then(() => {
+                console.log('Aposta registrada com sucesso.');
+            }).catch(error => {
+                console.error('Erro ao registrar aposta: ', error);
+                alert('Erro ao registrar aposta.');
+            });
         });
     </script>
     <a href="index.html">Voltar para a página principal</a>
