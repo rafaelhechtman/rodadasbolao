@@ -99,7 +99,8 @@
                 const cols = line.split(',');
                 const round = {};
                 headers.forEach((header, index) => {
-                    round[header.trim()] = cols[index].trim();
+                    round[header.trim()] = cols[index]. 
+                                        round[header.trim()] = cols[index].trim();
                 });
                 return round;
             });
@@ -173,3 +174,4 @@
 <table id="roundTable"></table>
 </body>
 </html>
+
