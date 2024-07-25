@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmação de Aposta</title>
+</head>
+<body>
+    <h1>Confirmação de Aposta</h1>
+    <p id="confirmation-message"></p>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const params = new URLSearchParams(window.location.search);
+            const name = params.get('name');
+            const team = params.get('team');
+            const matchTime = params.get('matchTime');
+
+            const message = `Obrigado, ${name}! Você apostou no ${team}. A partida começa em: ${matchTime}.`;
+            document.getElementById('confirmation-message').innerText = message;
+        });
+    </script>
+</body>
+</html>
