@@ -17,7 +17,18 @@
 
             const message = `Obrigado, ${name}! Você apostou no ${team}. A partida começa em: ${matchTime}.`;
             document.getElementById('confirmation-message').innerText = message;
+
+            // Armazenar a aposta no localStorage
+            const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
+            const betData = JSON.parse(localStorage.getItem('betData')) || [];
+            betData.push({ user: loggedInUser.username, team, matchTime });
+            localStorage.setItem('betData', JSON.stringify(betData));
         });
     </script>
+</head>
+<body>
+    <h1>Confirmação de Aposta</h1>
+    <p id="confirmation-message"></p>
+    <a href="index.html">Voltar para a página principal</a>
 </body>
 </html>
