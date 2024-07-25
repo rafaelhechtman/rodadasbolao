@@ -60,7 +60,24 @@
             background-color: #45a049;
         }
     </style>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-firestore.js"></script>
     <script>
+        // Your web app's Firebase configuration
+        var firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        var db = firebase.firestore();
+
         let currentRound = 19;
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -99,8 +116,7 @@
                 const cols = line.split(',');
                 const round = {};
                 headers.forEach((header, index) => {
-                    round[header.trim()] = cols[index]. 
-                                        round[header.trim()] = cols[index].trim();
+                    round[header.trim()] = cols[index].trim();
                 });
                 return round;
             });
@@ -128,8 +144,8 @@
                 const row = roundTable.insertRow();
                 row.insertCell(0).innerText = match.Rodada;
                 row.insertCell(1).innerText = match['Time Mandante'];
-                row.insertCell(2).innerText = match['Gols Mandante'] || 'x';
-                row.insertCell(3).innerText = match['Gols Visitante'] || 'x';
+                row.insertCell(2).innerText = parseInt(match['Gols Mandante']) || 'x';
+                row.insertCell(3).innerText = parseInt(match['Gols Visitante']) || 'x';
                 row.insertCell(4).innerText = match['Time Visitante'];
                 const betCellHome = row.insertCell(5);
                 const betCellAway = row.insertCell(6);
@@ -154,10 +170,17 @@
                 return;
             }
 
-            // Armazenar a escolha do time no localStorage
-            localStorage.setItem('betChoice', JSON.stringify({ user: loggedInUser.username, team, matchTime }));
-
-            window.location.href = `confirmation.html?name=${encodeURIComponent(loggedInUser.username)}&team=${encodeURIComponent(team)}&matchTime=${encodeURIComponent(matchTime)}`;
+            // Armazenar a escolha do time no Firestore
+            db.collection('bets').add({
+                user: loggedInUser.username,
+                team: team,
+                matchTime: matchTime
+            }).then(() => {
+                window.location.href = `confirmation.html?name=${encodeURIComponent(loggedInUser.username)}&team=${encodeURIComponent(team)}&matchTime=${encodeURIComponent(matchTime)}`;
+            }).catch(error => {
+                console.error('Erro ao registrar aposta: ', error);
+                alert('Erro ao registrar aposta.');
+            });
         }
     </script>
 </head>
@@ -174,4 +197,3 @@
 <table id="roundTable"></table>
 </body>
 </html>
-
