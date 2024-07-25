@@ -44,6 +44,24 @@
             background-color: #45a049;
         }
     </style>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-firestore.js"></script>
+    <script>
+        // Your web app's Firebase configuration
+        var firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        var db = firebase.firestore();
+    </script>
 </head>
 <body>
     <div class="login-container">
@@ -58,17 +76,24 @@
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
-            const users = JSON.parse(localStorage.getItem('users')) || [];
-
-            const user = users.find(user => user.username === username && user.password === password);
-
-            if (user) {
-                localStorage.setItem('loggedInUser', JSON.stringify({ username }));
-                window.location.href = 'index.html';
-            } else {
-                alert('Usuário ou senha incorretos.');
-            }
+            db.collection('users').where("username", "==", username).where("password", "==", password)
+                .get()
+                .then(querySnapshot => {
+                    if (querySnapshot.empty) {
+                        alert('Usuário ou senha incorretos.');
+                    } else {
+                        querySnapshot.forEach(doc => {
+                            localStorage.setItem('loggedInUser', JSON.stringify({ username }));                             localStorage.setItem('loggedInUser', JSON.stringify({ username }));
+                            window.location.href = 'index.html';
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao fazer login: ', error);
+                    alert('Erro ao fazer login.');
+                });
         }
     </script>
 </body>
 </html>
+
